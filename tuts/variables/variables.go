@@ -8,7 +8,17 @@ import "fmt"
 
 func main() {
 
+	// DN: Okay, so most imporant from here:
+	var x int = 25 // The very default
+	var y = 25     // Type inference
+	z := 25        // The shortest form to even omit the var keyword
+	fmt.Println(x, y, z)
+	fmt.Println("===========")
+
+	// DN: =============
+
 	// `var` declares 1 or more variables.
+	// DN: Notice the type inference.
 	var a = "initial"
 	fmt.Println(a)
 
