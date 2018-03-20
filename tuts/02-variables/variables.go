@@ -23,7 +23,7 @@ func main() {
 	fmt.Println(a)
 
 	// You can declare multiple variables at once.
-	var b, c int = 1, 2 // DN: Why... just why... not orthogonal... JS has shown people don't use this.
+	var b, c int = 1, 2 // DN: You need this concept for functions with multiple return values
 	fmt.Println(b, c)
 
 	// Go will infer the type of initialized variables.
