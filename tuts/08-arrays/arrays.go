@@ -1,3 +1,6 @@
+// DN: "Bottom line, don't use an array unless you know what you are doing."
+// DN: https://stackoverflow.com/questions/30694652/why-use-arrays-instead-of-slices
+
 // In Go, an _array_ is a numbered sequence of elements of a
 // specific length.
 

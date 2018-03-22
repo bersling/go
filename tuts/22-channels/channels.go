@@ -1,4 +1,7 @@
 // DN: Sounds simple
+// DN: As for everything, there are some critics:
+// DN: https://www.jtolio.com/2016/03/go-channels-are-bad-and-you-should-feel-bad/
+// DN: I can't judge yet whether this is justified or not
 
 // _Channels_ are the pipes that connect concurrent
 // goroutines. You can send values into channels from one

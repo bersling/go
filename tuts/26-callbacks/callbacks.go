@@ -1,4 +1,5 @@
 // DN: I don't really know whether callbacks are a good idea, but they work...
+// DN: This file is entirely written by me.
 
 package main
 
