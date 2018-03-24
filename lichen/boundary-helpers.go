@@ -1,5 +1,7 @@
 package main
 
+// Currently not used, as periodic boundaries are employed
+
 // e.g. in a 10x10 lattice:
 // 00 10 20 ... 90 are lower boundary cells of dim 1
 // 00 01 02 ... 09 of dim 2
