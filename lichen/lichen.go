@@ -27,7 +27,7 @@ func main() {
 
 	for t := 0; t < simulationEndTime; t++ {
 		battle(lattice, interactionMatrix, activeLinks)
-		Spawn(spawnProbability, lattice, interactionMatrix, eatingProbability)
+		Spawn(spawnProbability, &lattice, &interactionMatrix, eatingProbability)
 	}
 
 }
@@ -44,7 +44,7 @@ func getActiveLinks(lattice []int, latticeSize int, dimensions int, interactionM
 	for cell := 0; cell < latticeSize; cell++ {
 		for dim := 0; dim < dimensions; dim++ {
 			upperNeighbor := UpperNeighbor(cell, dim, latticeSize)
-			if canEat(upperNeighbor, cell, interactionMatrix) || canEat(cell, upperNeighbor, interactionMatrix) {
+			if CanEat(upperNeighbor, cell, interactionMatrix) || CanEat(cell, upperNeighbor, interactionMatrix) {
 				activeLinks = append(activeLinks, [2]int{lattice[cell], lattice[upperNeighbor]})
 			}
 		}
@@ -52,35 +52,30 @@ func getActiveLinks(lattice []int, latticeSize int, dimensions int, interactionM
 	return activeLinks
 }
 
-func canEat(speciesA int, speciesB int, interactionMatrix [][]bool) bool {
+func CanEat(speciesA int, speciesB int, interactionMatrix [][]bool) bool {
 	return interactionMatrix[speciesA][speciesB]
 }
 
 func AddSpeciesToInteractionMatrix(interactionMatrix *[][]bool, eatingProbability float64) {
 	var newSpeciesEats []bool
-	interactionMatrixPtr := *interactionMatrix
-	var newSpeciesNumber = len(interactionMatrixPtr)
+	var newSpeciesNumber = len(*interactionMatrix)
 	for i := 0; i < newSpeciesNumber; i++ {
 		newSpeciesEats = append(newSpeciesEats, eatingProbability > rand.Float64())
 		newSpeciesGetsEatenByI := eatingProbability > rand.Float64()
-		interactionMatrixPtr[i] = append(interactionMatrixPtr[i], newSpeciesGetsEatenByI)
+		(*interactionMatrix)[i] = append((*interactionMatrix)[i], newSpeciesGetsEatenByI)
 	}
 	newSpeciesEats = append(newSpeciesEats, false) // cannot eat itself
-	interactionMatrixPtr = append(interactionMatrixPtr, newSpeciesEats)
+	*interactionMatrix = append(*interactionMatrix, newSpeciesEats)
 }
 
-func Spawn(spawnProbability float64, lattice []int, interactionMatrix [][]bool, eatingProbability float64) ([]int, [][]bool) {
-	latticeSize := len(lattice)
-	latticeCopy := make([]int, len(lattice))
-	copy(latticeCopy, lattice)
+func Spawn(spawnProbability float64, lattice *[]int, interactionMatrix *[][]bool, eatingProbability float64) {
+	latticeSize := len(*lattice)
 	if spawnProbability > rand.Float64() {
-		newSpeciesNumber := len(interactionMatrix)
+		newSpeciesNumber := len(*interactionMatrix)
 		randomCoordinate := rand.Intn(latticeSize - 1)
-		latticeCopy[randomCoordinate] = newSpeciesNumber
-		AddSpeciesToInteractionMatrix(&interactionMatrix, eatingProbability)
-		return lattice, interactionMatrix
+		(*lattice)[randomCoordinate] = newSpeciesNumber
+		AddSpeciesToInteractionMatrix(interactionMatrix, eatingProbability)
 	}
-	return nil, nil
 }
 
 func getUpperNeighbors(cell int, dimensions int, latticeSize int) []int {

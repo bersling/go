@@ -96,13 +96,20 @@ func TestCellIsUpperNeighborDim3(t *testing.T) {
 
 func TestImmutability(t *testing.T) {
 	bla := []bool{false}
-	myFun(bla)
-	fmt.Println(bla[0])
+	myFun(&bla)
+	fmt.Println(bla[0], len(bla))
+	myFunTwo(&bla)
+	fmt.Println(bla[0], len(bla))
 }
 
-func myFun(bla []bool) {
-	bla = append(bla, true) // Does this create a function scoped variable bla?
-	bla[0] = true
+func myFun(bla *[]bool) {
+	ptr := *bla
+	ptr = append(ptr, true) // Does this create a function scoped variable?
+	ptr[0] = true
+}
+func myFunTwo(bla *[]bool) {
+	*bla = append(*bla, true) // Does this create a function scoped variable?
+	(*bla)[0] = true
 }
 
 func TestAddSpeciesToInteractionMatrix(t *testing.T) {
@@ -116,6 +123,14 @@ func TestAddSpeciesToInteractionMatrix(t *testing.T) {
 	}
 }
 
+func TestCanEat(t *testing.T) {
+	interactionMatrix := [][]bool{[]bool{false, true}, []bool{false, false}}
+	if CanEat(0, 0, interactionMatrix) || !CanEat(0, 1, interactionMatrix) ||
+		CanEat(1, 0, interactionMatrix) || CanEat(1, 1, interactionMatrix) {
+		t.Errorf("There's a problem with CanEat")
+	}
+}
+
 func TestSpawn(t *testing.T) {
 	interactionMatrix := [][]bool{[]bool{false, true}, []bool{false, false}}
 	// lattice:
@@ -123,29 +138,25 @@ func TestSpawn(t *testing.T) {
 	// 0 0 1
 	// 1 1 1 (2 species, species 1 is dominating species 0)
 	lattice := []int{1, 1, 1, 0, 0, 1, 1, 1, 1}
+	initialLattice := make([]int, len(lattice))
+	copy(initialLattice, lattice)
 	spawnProbability := 1.0
 	eatingProbability := 1.0
-	// test immutability
-	tmp := make([]int, len(lattice))
-	copy(tmp, lattice)
-	Spawn(spawnProbability, lattice, interactionMatrix, eatingProbability)
-	if !sliceEquals(tmp, lattice) {
-		t.Errorf("Expected no mutation")
-	}
 	// test no spawn
 	spawnProbability = 0.0
-	updatedLattice, updatedInteractionMatrix := Spawn(spawnProbability, lattice, interactionMatrix, eatingProbability)
-	if updatedLattice != nil || updatedInteractionMatrix != nil {
+	Spawn(spawnProbability, &lattice, &interactionMatrix, eatingProbability)
+	if !sliceEquals(initialLattice, lattice) {
 		t.Errorf("Expected no change")
 	}
+
 	// test spawn
 	spawnProbability = 1.0
-	updatedLattice, updatedInteractionMatrix = Spawn(spawnProbability, lattice, interactionMatrix, eatingProbability)
-	if sliceEquals(lattice, updatedLattice) {
+	Spawn(spawnProbability, &lattice, &interactionMatrix, eatingProbability)
+	if sliceEquals(lattice, initialLattice) {
 		t.Errorf("Expected update")
 	}
 	containsTwo := false
-	for _, v := range updatedLattice {
+	for _, v := range lattice {
 		if v == 2 {
 			containsTwo = true
 		}
@@ -157,13 +168,10 @@ func TestSpawn(t *testing.T) {
 
 func sliceEquals(sliceA []int, sliceB []int) bool {
 	isEqual := true
-	fmt.Println("===")
-	fmt.Println("len", len(sliceA), len(sliceB))
 	if len(sliceA) != len(sliceB) {
 		isEqual = false
 	} else {
 		for i, v := range sliceA {
-			fmt.Println("val", v, sliceB[i])
 			if sliceB[i] != v {
 				isEqual = false
 			}
