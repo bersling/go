@@ -94,7 +94,7 @@ func TestCellIsUpperNeighborDim3(t *testing.T) {
 	}
 }
 
-func TestImmutability(t *testing.T) {
+func Immutability(t *testing.T) {
 	bla := []bool{false}
 	myFun(&bla)
 	fmt.Println(bla[0], len(bla))
